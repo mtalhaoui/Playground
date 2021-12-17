@@ -1,0 +1,12 @@
+<div class="wrapper">
+  <div>
+    <p>Current: {{ mouseX }}, {{ mouseY }}</p>
+    <p>Last: {{ lastMouseX }}, {{ lastMouseY }}</p>
+    <p>Mouse down: {{ mouseDown }}</p>
+  </div>
+  <div class="container" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)">
+    <div class="bg-image"></div>
+    <app-rectangle *ngFor="let rectangle of rectangles" [rectangle]="rectangle"></app-rectangle>
+  </div>
+  <p></p>
+</div>
