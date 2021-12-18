@@ -20,3 +20,20 @@
     }
   }
 }
+
+.icons {
+  display: grid;
+  grid-template-columns: repeat(2, 30px);
+
+  .icon-box {
+    height: 24px;
+    width: 24px;
+    background-color: white;
+    border-radius: 2px;
+    padding: 1px;
+  }
+
+  .active-icon {
+    background-color: #363636;
+  }
+}

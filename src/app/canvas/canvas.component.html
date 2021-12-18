@@ -4,9 +4,20 @@
     <p>Last: {{ lastMouseX }}, {{ lastMouseY }}</p>
     <p>Mouse down: {{ mouseDown }}</p>
   </div>
-  <div class="container" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)" (mousemove)="onMouseMove($event)">
+
+  <div class="container" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)"
+    (mousemove)="onMouseMove($event)">
     <div class="bg-image"></div>
     <app-rectangle *ngFor="let rectangle of rectangles" [rectangle]="rectangle"></app-rectangle>
+
+    <app-rectangle [rectangle]="currentRectangle"></app-rectangle>
   </div>
-  <p></p>
+
+  <div>
+    <!-- <div class="icons">
+      <div class="icon-box" *ngFor="let drawIcon of drawIcons" [ngClass]="{ 'active-icon': drawIcon.active }">
+        <img [src]="drawIcon.path" [alt]="drawIcon.name">
+      </div>
+    </div> -->
+  </div>
 </div>
