@@ -14,6 +14,7 @@ export class CanvasComponent implements OnInit {
   activeDrawIcon!: DrawIconType;
   currentRectangle!: Rectangle;
   rectangleHelper!: RectangleHelper;
+  selectedRectangleHelper!: RectangleHelper;
 
   constructor() {
     this.activeDrawIcon = DrawIconType.None;
@@ -40,5 +41,9 @@ export class CanvasComponent implements OnInit {
 
   assignRectangleHelper(rectangleHelper: RectangleHelper): void {
     this.rectangleHelper = rectangleHelper;
+  }
+
+  assignSelectedRectangleHelper(rectangleHelper: RectangleHelper): void {
+    this.selectedRectangleHelper = rectangleHelper;
   }
 }

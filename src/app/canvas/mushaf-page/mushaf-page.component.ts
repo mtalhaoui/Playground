@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Observable, of, Subject, takeUntil } from 'rxjs';
 import { DrawIconType } from 'src/app/shared/enum/draw-icon-type.enum';
 
@@ -10,14 +10,18 @@ import { Rectangle } from 'src/app/shared/model/rectangle.model';
   templateUrl: './mushaf-page.component.html',
   styleUrls: ['./mushaf-page.component.scss']
 })
-export class MushafPageComponent implements OnInit {
+export class MushafPageComponent {
   @Input() activeDrawIcon!: DrawIconType;
-  @Output() rectangleHelperEvent = new EventEmitter<RectangleHelper>();
   @Output() currentRectangleEvent = new EventEmitter<Rectangle>();
+  @Output() rectangleHelperEvent = new EventEmitter<RectangleHelper>();
+  @Output() selectedRectangleHelperEvent = new EventEmitter<RectangleHelper>();
 
   rectangles: Rectangle[] = [];
   currentRectangle: Rectangle;
+  selectedRectangle: Rectangle;
+  // This is just for showing the dimensions
   rectangleHelper: RectangleHelper;
+  selectedRectangleHelper: RectangleHelper;
 
   width!: number;
   height!: number;
@@ -25,31 +29,31 @@ export class MushafPageComponent implements OnInit {
 
   constructor() {
     this.currentRectangle = this.emptyRectangle();
+    this.selectedRectangle = this.emptyRectangle();
     this.rectangleHelper = new RectangleHelper();
+    this.selectedRectangleHelper = new RectangleHelper();
     this.resetState();
-  }
-
-  ngOnInit(): void {
   }
 
   onMouseDown(e: MouseEvent): void {
     if (this.activeDrawIcon === DrawIconType.None) {
       alert("Choose a drawing option");
-    }
-
-    if (this.activeDrawIcon === DrawIconType.ArrowPointer) {
+    } else if (this.activeDrawIcon === DrawIconType.ArrowPointer) {
       this.rectangleHelper.mouseDown = true;
       this.rectangleHelper.lastMouseX = e.offsetX;
       this.rectangleHelper.lastMouseY = e.offsetY;
       this.rectangleHelperEvent.emit(this.rectangleHelper);
-    }
-
-    if (this.activeDrawIcon === DrawIconType.Move) {
+    } else if (this.activeDrawIcon === DrawIconType.Move) {
       this.rectangles.filter(rectangle => {
         if (rectangle.isInVector(e.pageX, e.pageY)) {
           rectangle.isSelected = true;
-          this.currentRectangle = rectangle;
-          this.currentRectangleEvent.emit(this.currentRectangle);
+          this.selectedRectangle = rectangle;
+          this.currentRectangleEvent.emit(rectangle);
+
+          this.selectedRectangleHelper.lastMouseX = e.pageX;
+          this.selectedRectangleHelper.lastMouseY = e.pageY;
+          this.selectedRectangleHelper.mouseDown = true;
+          this.selectedRectangleHelperEvent.emit(this.selectedRectangleHelper);
         } else {
           rectangle.isSelected = false;
         }
@@ -58,41 +62,57 @@ export class MushafPageComponent implements OnInit {
   }
 
   onMouseUp(e: MouseEvent): void {
-    if (!this.rectangleHelper.mouseDown) return;
-
-    let finalise = new Subject<void>();
-    this.getRectangle()
-      .pipe(takeUntil(finalise))
-      .subscribe((rectangle: Rectangle) => {
-        if (rectangle.width !== 0 && rectangle.height !== 0) {
-          this.rectangles.push(rectangle);
-        }
-        this.currentRectangle = this.emptyRectangle();
-        this.resetState();
-        finalise.next();
-        finalise.complete();
-      });
-  }
-
-  onMouseMove(e: MouseEvent): void {
-    this.rectangleHelper.mouseX = e.pageX;
-    this.rectangleHelper.mouseY = e.pageY;
-
-    this.rectangleHelperEvent.emit(this.rectangleHelper);
-
-    if (this.rectangleHelper.mouseDown) {
-      this.width = this.rectangleHelper.mouseX - this.rectangleHelper.lastMouseX;
-      this.height = this.rectangleHelper.mouseY - this.rectangleHelper.lastMouseY;
+    if (this.activeDrawIcon === DrawIconType.ArrowPointer) {
+      if (!this.rectangleHelper.mouseDown) return;
 
       let finalise = new Subject<void>();
       this.getRectangle()
         .pipe(takeUntil(finalise))
         .subscribe((rectangle: Rectangle) => {
-          this.currentRectangle = rectangle;
-          this.currentRectangleEvent.emit(this.currentRectangle);
+          if (rectangle.width !== 0 && rectangle.height !== 0) {
+            this.rectangles.push(rectangle);
+          }
+          this.currentRectangle = this.emptyRectangle();
+          this.resetState();
           finalise.next();
           finalise.complete();
         });
+    } else if (this.activeDrawIcon === DrawIconType.Move) {
+      this.selectedRectangleHelper.mouseDown = false;
+    }
+  }
+
+  onMouseMove(e: MouseEvent): void {
+    if (this.activeDrawIcon === DrawIconType.ArrowPointer) {
+      this.rectangleHelper.mouseX = e.pageX;
+      this.rectangleHelper.mouseY = e.pageY;
+      this.rectangleHelperEvent.emit(this.rectangleHelper);
+      if (this.rectangleHelper.mouseDown) {
+        this.width = this.rectangleHelper.mouseX - this.rectangleHelper.lastMouseX;
+        this.height = this.rectangleHelper.mouseY - this.rectangleHelper.lastMouseY;
+
+        let finalise = new Subject<void>();
+        this.getRectangle()
+          .pipe(takeUntil(finalise))
+          .subscribe((rectangle: Rectangle) => {
+            this.currentRectangle = rectangle;
+            this.currentRectangleEvent.emit(rectangle);
+            finalise.next();
+            finalise.complete();
+          });
+      }
+    } else if (this.activeDrawIcon === DrawIconType.Move) {
+      this.selectedRectangleHelper.mouseX = e.pageX;
+      this.selectedRectangleHelper.mouseY = e.pageY;
+      this.selectedRectangleHelperEvent.emit(this.selectedRectangleHelper);
+
+      if (this.selectedRectangle.isSelected && this.selectedRectangleHelper.mouseDown) {
+        this.selectedRectangle.left += this.selectedRectangleHelper.mouseX - this.selectedRectangleHelper.lastMouseX;
+        this.selectedRectangle.top += this.selectedRectangleHelper.mouseY - this.selectedRectangleHelper.lastMouseY;
+
+        this.selectedRectangleHelper.lastMouseX = this.selectedRectangleHelper.mouseX;
+        this.selectedRectangleHelper.lastMouseY = this.selectedRectangleHelper.mouseY;
+      }
     }
   }
 

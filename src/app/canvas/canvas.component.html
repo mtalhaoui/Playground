@@ -3,7 +3,7 @@
   </div> -->
 
   <app-mushaf-page [activeDrawIcon]="activeDrawIcon" (rectangleHelperEvent)="assignRectangleHelper($event)"
-    (currentRectangleEvent)="assignCurrentRectangle($event)">
+    (currentRectangleEvent)="assignCurrentRectangle($event)" (selectedRectangleHelperEvent)="assignSelectedRectangleHelper($event)">
   </app-mushaf-page>
 
   <div style="font-size: smaller;">
@@ -19,9 +19,18 @@
 
     <div>
       <ng-container *ngIf="rectangleHelper">
-        <p>Current (offset): {{ rectangleHelper.mouseX }}, {{ rectangleHelper.mouseY }}</p>
-        <p>Last: {{ rectangleHelper.lastMouseX }}, {{ rectangleHelper.lastMouseY }}</p>
-        <p>Mouse down: {{ rectangleHelper.mouseDown }}</p>
+        <strong>Rectangle helper</strong><br>
+        <span>Current: {{ rectangleHelper.mouseX }}, {{ rectangleHelper.mouseY }}</span><br>
+        <span>Last: {{ rectangleHelper.lastMouseX }}, {{ rectangleHelper.lastMouseY }}</span><br>
+        <span>Mouse down: {{ rectangleHelper.mouseDown }}</span>
+        <hr>
+      </ng-container>
+
+      <ng-container *ngIf="selectedRectangleHelper">
+        <strong>Selected rectangle helper</strong><br>
+        <span>Current: {{ selectedRectangleHelper.mouseX }}, {{ selectedRectangleHelper.mouseY }}</span><br>
+        <span>Last: {{ selectedRectangleHelper.lastMouseX }}, {{ selectedRectangleHelper.lastMouseY }}</span><br>
+        <span>Mouse down: {{ selectedRectangleHelper.mouseDown }}</span>
         <hr>
       </ng-container>
 
