@@ -20,31 +20,53 @@ export class CanvasComponent implements OnInit {
   width!: number;
   height!: number;
   top!: number;
+  activeDrawIcon!: string;
 
   constructor() {
     this.currentRectangle = this.emptyRectangle();
     this.resetState();
+    this.activeDrawIcon = "";
   }
 
   ngOnInit(): void {
     this.drawIcons = [
       new DrawIcon("MoveIcon", "../../assets/move-icon.svg", false),
-      new DrawIcon("ArrowPointer", "../../assets/arrow-pointer.svg", true)
+      new DrawIcon("ArrowPointer", "../../assets/arrow-pointer.svg", false)
     ]
   }
 
   onMouseDown(e: MouseEvent) {
-    this.mouseDown = true;
-    this.lastMouseX = e.offsetX;
-    this.lastMouseY = e.offsetY;
+    if (this.activeDrawIcon === "") {
+      alert("Choose a drawing option");
+    }
+
+    if (this.activeDrawIcon === "ArrowPointer") {
+      this.mouseDown = true;
+      this.lastMouseX = e.offsetX;
+      this.lastMouseY = e.offsetY;
+    }
+
+    if (this.activeDrawIcon == "MoveIcon") {
+      this.rectangles.filter(rectangle => {
+        if (rectangle.isInVector(e.pageX, e.pageY)) {
+          rectangle.isSelected = true;
+        } else {
+          rectangle.isSelected = false;
+        }
+      });
+    }
   }
 
   onMouseUp(e: MouseEvent) {
+    if (!this.mouseDown) return;
+
     let finalise = new Subject<void>();
     this.getRectangle()
       .pipe(takeUntil(finalise))
       .subscribe((rectangle: Rectangle) => {
-        this.rectangles.push(rectangle);
+        if (rectangle.width !== 0 && rectangle.height !== 0) {
+          this.rectangles.push(rectangle);
+        }
         this.currentRectangle = this.emptyRectangle();
         this.resetState();
         finalise.next();
@@ -53,8 +75,8 @@ export class CanvasComponent implements OnInit {
   }
 
   onMouseMove(e: MouseEvent) {
-    this.mouseX = e.offsetX;
-    this.mouseY = e.offsetY;
+    this.mouseX = e.pageX;
+    this.mouseY = e.pageY;
 
     if (this.mouseDown) {
       this.width = this.mouseX - this.lastMouseX;
@@ -71,8 +93,19 @@ export class CanvasComponent implements OnInit {
     }
   }
 
+  changeDrawIcon(icon: DrawIcon): void {
+    this.drawIcons.forEach(drawIcon => {
+      drawIcon.active = false;
+    });
+    icon.active = true;
+    this.activeDrawIcon = icon.name;
+  }
+
   private getRectangle(): Observable<Rectangle> {
-    let left = this.lastMouseX, top = this.lastMouseY, width = this.width, height = this.height;
+    let left = this.lastMouseX,
+      top = this.lastMouseY,
+      width = this.width,
+      height = this.height;
 
     if (this.top === 0) {
       this.top = top;
@@ -88,8 +121,8 @@ export class CanvasComponent implements OnInit {
       top = this.mouseY;
     }
 
-    if (this.top === top) {
-      console.log("width: ", width, " height: ", height, " left: ", left, " top: ", this.top);
+    if (this.top === top && width !== 0 && height !== 0) {
+      // console.log("width: ", width, " height: ", height, " left: ", left, " top: ", this.top);
       return of(new Rectangle(width, height, left, this.top));
     } else {
       return of(this.emptyRectangle());

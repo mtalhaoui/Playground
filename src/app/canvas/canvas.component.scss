@@ -1,8 +1,7 @@
 .wrapper {
   display: grid;
   grid-template-columns: 1fr minmax(420px, 1fr) 1fr;
-  // background-color: #fffbdd;
-  background-color: green;
+  background-color: #fffbdd;
 
   .container {
     position: relative;
@@ -21,19 +20,30 @@
   }
 }
 
-.icons {
-  display: grid;
-  grid-template-columns: repeat(2, 30px);
+.draw-icons-container {
+  padding: 0 1rem;
 
-  .icon-box {
-    height: 24px;
-    width: 24px;
-    background-color: white;
-    border-radius: 2px;
-    padding: 1px;
+  h4 {
+    font-size: 14px;
+    margin: 0;
+    margin-bottom: 8px;
   }
 
-  .active-icon {
-    background-color: #363636;
+  .icons {
+    display: grid;
+    grid-template-columns: repeat(2, 30px);
+
+    .icon-box {
+      height: 24px;
+      width: 24px;
+      background-color: white;
+      border-radius: 2px;
+      padding: 1px;
+    }
+
+    .active-icon {
+      background: rgb(0, 0, 0);
+      background: linear-gradient(180deg, #585858 0%, transparent 100%);
+    }
   }
 }

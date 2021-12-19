@@ -1,23 +1,41 @@
 <div class="wrapper">
-  <div>
+  <!-- <div>
     <p>Current: {{ mouseX }}, {{ mouseY }}</p>
     <p>Last: {{ lastMouseX }}, {{ lastMouseY }}</p>
     <p>Mouse down: {{ mouseDown }}</p>
-  </div>
+  </div> -->
 
   <div class="container" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)"
     (mousemove)="onMouseMove($event)">
     <div class="bg-image"></div>
     <app-rectangle *ngFor="let rectangle of rectangles" [rectangle]="rectangle"></app-rectangle>
-
     <app-rectangle [rectangle]="currentRectangle"></app-rectangle>
   </div>
 
-  <div>
-    <!-- <div class="icons">
-      <div class="icon-box" *ngFor="let drawIcon of drawIcons" [ngClass]="{ 'active-icon': drawIcon.active }">
-        <img [src]="drawIcon.path" [alt]="drawIcon.name">
+  <div style="font-size: smaller;">
+    <div class="draw-icons-container">
+      <h4>Draw icon options:</h4>
+      <div class="icons">
+        <div class="icon-box" *ngFor="let drawIcon of drawIcons" (click)="changeDrawIcon(drawIcon)"
+          [ngClass]="{ 'active-icon': drawIcon.active }">
+          <img [src]="drawIcon.path" [alt]="drawIcon.name">
+        </div>
       </div>
-    </div> -->
+    </div>
+
+    <div>
+      <p>Current (offset): {{ mouseX }}, {{ mouseY }}</p>
+      <p>Last: {{ lastMouseX }}, {{ lastMouseY }}</p>
+      <p>Mouse down: {{ mouseDown }}</p>
+      <hr>
+
+      Current rectangle selected:
+
+      <ng-container *ngFor="let rectangle of rectangles">
+        <div *ngIf="rectangle.isSelected">
+          {{ rectangle.getDimensions() }}
+        </div>
+      </ng-container>
+    </div>
   </div>
 </div>
