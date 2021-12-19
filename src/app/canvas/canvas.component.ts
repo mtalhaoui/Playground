@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { DrawIconType } from '../shared/enum/draw-icon-type.enum';
 import { RectangleHelper } from '../shared/model/rectangle-helper.model';
 import { Rectangle } from '../shared/model/rectangle.model';
+import { DrawIcon } from './model/draw-icon.model';
 
 @Component({
   selector: 'app-canvas',
@@ -9,18 +11,18 @@ import { Rectangle } from '../shared/model/rectangle.model';
 })
 export class CanvasComponent implements OnInit {
   drawIcons: DrawIcon[] = [];
-  activeDrawIcon!: string;
+  activeDrawIcon!: DrawIconType;
   currentRectangle!: Rectangle;
   rectangleHelper!: RectangleHelper;
 
   constructor() {
-    this.activeDrawIcon = "";
+    this.activeDrawIcon = DrawIconType.None;
   }
 
   ngOnInit(): void {
     this.drawIcons = [
-      new DrawIcon("MoveIcon", "../../assets/move-icon.svg", false),
-      new DrawIcon("ArrowPointer", "../../assets/arrow-pointer.svg", false)
+      new DrawIcon(DrawIconType.Move, "../../assets/move-icon.svg"),
+      new DrawIcon(DrawIconType.ArrowPointer, "../../assets/arrow-pointer.svg")
     ]
   }
 
@@ -39,8 +41,4 @@ export class CanvasComponent implements OnInit {
   assignRectangleHelper(rectangleHelper: RectangleHelper): void {
     this.rectangleHelper = rectangleHelper;
   }
-}
-
-export class DrawIcon {
-  constructor(public name: string, public path: string, public active: boolean) { }
 }

@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Observable, of, Subject, takeUntil } from 'rxjs';
-import { RectangleHelper } from 'src/app/shared/model/rectangle-helper.model';
+import { DrawIconType } from 'src/app/shared/enum/draw-icon-type.enum';
 
+import { RectangleHelper } from 'src/app/shared/model/rectangle-helper.model';
 import { Rectangle } from 'src/app/shared/model/rectangle.model';
 
 @Component({
@@ -10,7 +11,7 @@ import { Rectangle } from 'src/app/shared/model/rectangle.model';
   styleUrls: ['./mushaf-page.component.scss']
 })
 export class MushafPageComponent implements OnInit {
-  @Input() activeDrawIcon!: string;
+  @Input() activeDrawIcon!: DrawIconType;
   @Output() rectangleHelperEvent = new EventEmitter<RectangleHelper>();
   @Output() currentRectangleEvent = new EventEmitter<Rectangle>();
 
@@ -32,18 +33,18 @@ export class MushafPageComponent implements OnInit {
   }
 
   onMouseDown(e: MouseEvent): void {
-    if (this.activeDrawIcon === "") {
+    if (this.activeDrawIcon === DrawIconType.None) {
       alert("Choose a drawing option");
     }
 
-    if (this.activeDrawIcon === "ArrowPointer") {
+    if (this.activeDrawIcon === DrawIconType.ArrowPointer) {
       this.rectangleHelper.mouseDown = true;
       this.rectangleHelper.lastMouseX = e.offsetX;
       this.rectangleHelper.lastMouseY = e.offsetY;
       this.rectangleHelperEvent.emit(this.rectangleHelper);
     }
 
-    if (this.activeDrawIcon == "MoveIcon") {
+    if (this.activeDrawIcon === DrawIconType.Move) {
       this.rectangles.filter(rectangle => {
         if (rectangle.isInVector(e.pageX, e.pageY)) {
           rectangle.isSelected = true;
