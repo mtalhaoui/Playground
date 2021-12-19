@@ -5,12 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RectangleComponent } from './components/rectangle/rectangle.component';
 import { CanvasComponent } from './canvas/canvas.component';
+import { MushafPageComponent } from './canvas/mushaf-page/mushaf-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RectangleComponent,
-    CanvasComponent
+    CanvasComponent,
+    MushafPageComponent
   ],
   imports: [
     BrowserModule,

@@ -1,16 +1,10 @@
 <div class="wrapper">
   <!-- <div>
-    <p>Current: {{ mouseX }}, {{ mouseY }}</p>
-    <p>Last: {{ lastMouseX }}, {{ lastMouseY }}</p>
-    <p>Mouse down: {{ mouseDown }}</p>
   </div> -->
 
-  <div class="container" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)"
-    (mousemove)="onMouseMove($event)">
-    <div class="bg-image"></div>
-    <app-rectangle *ngFor="let rectangle of rectangles" [rectangle]="rectangle"></app-rectangle>
-    <app-rectangle [rectangle]="currentRectangle"></app-rectangle>
-  </div>
+  <app-mushaf-page [activeDrawIcon]="activeDrawIcon" (rectangleHelperEvent)="assignRectangleHelper($event)"
+    (currentRectangleEvent)="assignCurrentRectangle($event)">
+  </app-mushaf-page>
 
   <div style="font-size: smaller;">
     <div class="draw-icons-container">
@@ -24,17 +18,16 @@
     </div>
 
     <div>
-      <p>Current (offset): {{ mouseX }}, {{ mouseY }}</p>
-      <p>Last: {{ lastMouseX }}, {{ lastMouseY }}</p>
-      <p>Mouse down: {{ mouseDown }}</p>
-      <hr>
+      <ng-container *ngIf="rectangleHelper">
+        <p>Current (offset): {{ rectangleHelper.mouseX }}, {{ rectangleHelper.mouseY }}</p>
+        <p>Last: {{ rectangleHelper.lastMouseX }}, {{ rectangleHelper.lastMouseY }}</p>
+        <p>Mouse down: {{ rectangleHelper.mouseDown }}</p>
+        <hr>
+      </ng-container>
 
-      Current rectangle selected:
-
-      <ng-container *ngFor="let rectangle of rectangles">
-        <div *ngIf="rectangle.isSelected">
-          {{ rectangle.getDimensions() }}
-        </div>
+      <ng-container *ngIf="currentRectangle">
+        Output dimensions: <br>
+        {{ currentRectangle.getDimensions() }}
       </ng-container>
     </div>
   </div>

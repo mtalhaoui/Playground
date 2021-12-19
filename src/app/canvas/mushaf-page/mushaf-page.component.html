@@ -1,0 +1,6 @@
+<div class="container" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)"
+  (mousemove)="onMouseMove($event)">
+  <div class="bg-image"></div>
+  <app-rectangle *ngFor="let rectangle of rectangles" [rectangle]="rectangle"></app-rectangle>
+  <app-rectangle [rectangle]="currentRectangle"></app-rectangle>
+</div>
